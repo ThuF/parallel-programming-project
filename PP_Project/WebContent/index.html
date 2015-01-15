@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>Java Parallel Cloud Processing</title>
+	    <meta charset="UTF-8">
+	    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+	    <!-- css -->
+	    <link href="css/basic.css" rel="stylesheet" type="text/css" media="screen">
+	    <link href="css/dropzone.css" rel="stylesheet" type="text/css">
+	    <!-- js -->
+	    <script type="text/Javascript" src="js/dropzone.js"></script>
+	    <script type="text/Javascript" src="js/jquery-2.1.3.min.js"></script>
+	</head>
+	
+	<body>
+		<script>
+		Dropzone.options.myAwesomeDropzone = {
+				  paramName: "file",
+				  parallelUploads: 10000,
+		          uploadMultiple: false,
+		          acceptedFiles: ".txt",
+		          init: function() {
+		        		    this.hiddenFileInput.removeAttribute('multiple');
+		        	    this.on("complete", function(file) { 
+		        	    	var correctFiles = [];
+		        	    	var allFiles = this.files;
+		        	    	for(var i=0; i< allFiles.length; i++){
+		        	    		if(allFiles[i].accepted && allFiles[i].status === 'success'){
+		        	    			correctFiles.push(allFiles[i]);
+		        	    		}
+		        	    	} 
+		        	    	if (correctFiles.length > 1){
+		        	    		window.open("http://localhost:8080/PP_Project/uploads", '_blank');
+		        	    	}
+		        	    });
+		        	}
+				};
+		// reset matrix files on the server
+		$(document).ready(function() {
+			$.ajax({
+			    url: 'uploads',
+			    type: 'DELETE',
+			    success: function(result, status) {
+			    	if (status === 'error'){
+			    		alert("There is problem in the server. Matrix files can't deleted!");
+			    	}
+			    }
+			});
+		  });
+		</script>
+	   <form action="uploads"
+	      class="dropzone"
+	      id="my-awesome-dropzone">
+	   </form>
+	
+	</body>
+</html>
