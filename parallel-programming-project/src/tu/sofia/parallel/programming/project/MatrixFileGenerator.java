@@ -1,4 +1,4 @@
-package com.cloud.pack;
+package tu.sofia.parallel.programming.project;
 
 import java.io.FileWriter;
 import java.io.IOException;

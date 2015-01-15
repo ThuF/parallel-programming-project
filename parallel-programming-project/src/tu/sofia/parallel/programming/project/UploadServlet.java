@@ -1,12 +1,10 @@
-package com.cloud.pack;
+package tu.sofia.parallel.programming.project;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,11 +15,10 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
 @WebServlet("/uploads")
-public class FilesUploadServlet extends HttpServlet {
+public class UploadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private int[][][] matrices;
 	private int[][] result;
@@ -34,21 +31,31 @@ public class FilesUploadServlet extends HttpServlet {
 	}
 
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		response.setContentType("text/plain");
+		response.setHeader("Content-Disposition", "attachment;filename=result-of-multiplication.txt");
+		PrintWriter out = response.getWriter();
+		response.setStatus(200);
+		try {
+			writeResult(out);
+
+			resetMatricesArray();
+			matrices[1] = result;
+		} catch (IllegalArgumentException iae) {
+			out.print(iae.getMessage());
+		}
+		out.flush();
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<String> filesAsStrings = new ArrayList<String>();
 		try {
-			List<FileItem> items = new ServletFileUpload(
-					new DiskFileItemFactory()).parseRequest(req);
+			ServletFileUpload servletFileUpload = new ServletFileUpload(new DiskFileItemFactory());
+			List<FileItem> items = servletFileUpload.parseRequest(request);
 			for (FileItem item : items) {
-				if (item.isFormField()) {
-
-				} else {
-					// Process form file field (input type="file").
-					String fieldName = item.getFieldName();
-					String fileName = FilenameUtils.getName(item.getName());
-					InputStream fileContent = item.getInputStream();
-					filesAsStrings.add(IOUtils.toString(fileContent, "UTF-8"));
+				if (!item.isFormField()) {
+					filesAsStrings.add(IOUtils.toString(item.getInputStream(), "UTF-8"));
 				}
 			}
 		} catch (FileUploadException e) {
@@ -57,21 +64,26 @@ public class FilesUploadServlet extends HttpServlet {
 		String message = null;
 		try {
 			parseAndSaveMatrix(filesAsStrings);
-			resp.setStatus(200);
+			response.setStatus(200);
 		} catch (NumberFormatException e) {
 			// bad request
-			resp.setStatus(400);
+			response.setStatus(400);
 			message = "There is no matrix in the file or is not properly formated!";
 		}
 
-		resp.setContentType("application/json");
-		PrintWriter out = resp.getWriter();
+		response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
 		out.print("{\"error\": \"" + message + "\"}");
 		out.flush();
 	}
 
-	private void parseAndSaveMatrix(List<String> filesAsStrings)
-			throws NumberFormatException {
+	@Override
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		resetMatricesArray();
+		response.setStatus(200);
+	}
+
+	private void parseAndSaveMatrix(List<String> filesAsStrings) throws NumberFormatException {
 		for (int m = 0; m < filesAsStrings.size(); m++) {
 			String[] rows = filesAsStrings.get(m).split("\n");
 			String[] cols = rows[0].split(" ");
@@ -94,37 +106,17 @@ public class FilesUploadServlet extends HttpServlet {
 		}
 	}
 
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		resp.setContentType("text/plain");
-		resp.setHeader("Content-Disposition",
-				"attachment;filename=result-of-multiplication.txt");
-		PrintWriter out = resp.getWriter();
-		resp.setStatus(200);
-		try {
-			writeResult(out);
-
-			resetMatricesArray();
-			matrices[1] = result;
-		} catch (IllegalArgumentException iae) {
-			out.print(iae.getMessage());
-		}
-		out.flush();
-	}
-
-	private void writeResult(PrintWriter out) throws IllegalArgumentException{
-		out.print("Multiplication of 2 matrices: " + matrices[0].length
-				+ "x" + matrices[0][0].length + " and "
-				+ matrices[1].length + "x" + matrices[1][0].length);
+	private void writeResult(PrintWriter out) throws IllegalArgumentException {
+		out.print("Multiplication of 2 matrices: " + matrices[0].length + "x"
+				+ matrices[0][0].length + " and " + matrices[1].length + "x"
+				+ matrices[1][0].length);
 		out.println();
 		out.println();
 		long startTime = System.currentTimeMillis();
 		MatrixMultiplicator.multiplyInParallel(matrices[0], matrices[1]);
 		long endTime = System.currentTimeMillis();
-		out.print("Time for being matrices multiplied in parallel (with "
-				+ matrices[0][0].length + " threads): "
-				+ (endTime - startTime) + " milliseconds");
+		out.print("Time for being matrices multiplied in parallel (with " + matrices[0][0].length
+				+ " threads): " + (endTime - startTime) + " milliseconds");
 		out.println();
 		out.println();
 		startTime = System.currentTimeMillis();
@@ -140,13 +132,6 @@ public class FilesUploadServlet extends HttpServlet {
 		printMatrixInWriter(result, out);
 	}
 
-	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp)
-			throws ServletException, IOException {
-		resetMatricesArray();
-		resp.setStatus(200);
-	}
-
 	private static void printMatrixInWriter(int[][] matrix, PrintWriter writer) {
 		for (int i = 0; i < matrix.length; i++) {
 			for (int j = 0; j < matrix[0].length; j++) {
@@ -156,12 +141,12 @@ public class FilesUploadServlet extends HttpServlet {
 		}
 	}
 
-	public void addInMatricesArray(int[][] matrix) {
+	private void addInMatricesArray(int[][] matrix) {
 		matrices[nextIndex] = matrix;
 		++nextIndex;
 	}
 
-	public void resetMatricesArray() {
+	private void resetMatricesArray() {
 		matrices = new int[2][][];
 		nextIndex = 0;
 	}

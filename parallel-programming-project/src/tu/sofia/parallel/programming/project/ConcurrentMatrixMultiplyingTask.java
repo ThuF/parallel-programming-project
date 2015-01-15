@@ -1,10 +1,5 @@
-package com.cloud.pack;
+package tu.sofia.parallel.programming.project;
 
-
-/**
- * @date 21.11.2012
- * @author Thomas Jahoda
- */
 public class ConcurrentMatrixMultiplyingTask implements Runnable {
 
     private int[][] matrixA;
