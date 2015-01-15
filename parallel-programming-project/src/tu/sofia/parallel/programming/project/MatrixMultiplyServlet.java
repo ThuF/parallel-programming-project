@@ -17,8 +17,8 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
 
-@WebServlet("/uploads")
-public class UploadServlet extends HttpServlet {
+@WebServlet("/matrix-multiply")
+public class MatrixMultiplyServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private int[][][] matrices;
 	private int[][] result;

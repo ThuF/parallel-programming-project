@@ -30,7 +30,7 @@
 		        	    		}
 		        	    	} 
 		        	    	if (correctFiles.length > 1){
-		        	    		window.open("http://localhost:8080/PP_Project/uploads", '_blank');
+		        	    		window.open("matrix-multiply", '_blank');
 		        	    	}
 		        	    });
 		        	}
@@ -38,7 +38,7 @@
 		// reset matrix files on the server
 		$(document).ready(function() {
 			$.ajax({
-			    url: 'uploads',
+			    url: 'matrix-multiply',
 			    type: 'DELETE',
 			    success: function(result, status) {
 			    	if (status === 'error'){
@@ -48,10 +48,8 @@
 			});
 		  });
 		</script>
-	   <form action="uploads"
-	      class="dropzone"
-	      id="my-awesome-dropzone">
-	   </form>
+
+	   <form action="matrix-multiply" class="dropzone" id="my-awesome-dropzone"></form>
 	
 	</body>
 </html>
