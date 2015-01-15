@@ -1,4 +1,4 @@
-package tu.sofia.parallel.programming.project;
+package tu.sofia.parallel.programming.project.multiplicator;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,14 +66,5 @@ public class MatrixMultiplicator {
 			}
 		}
 		return matrixProduct;
-	}
-
-	public static boolean validDimension(int dim) {
-		if (dim <= 0 || dim > 1000) {
-			System.err.println("Dimension value entered is not valid");
-			return false;
-		}
-		return true;
-
 	}
 }

@@ -1,4 +1,4 @@
-package tu.sofia.parallel.programming.project;
+package tu.sofia.parallel.programming.project.generator;
 
 import java.io.FileWriter;
 import java.io.IOException;

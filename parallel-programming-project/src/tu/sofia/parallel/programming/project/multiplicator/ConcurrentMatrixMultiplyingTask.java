@@ -1,4 +1,4 @@
-package tu.sofia.parallel.programming.project;
+package tu.sofia.parallel.programming.project.multiplicator;
 
 public class ConcurrentMatrixMultiplyingTask implements Runnable {
 

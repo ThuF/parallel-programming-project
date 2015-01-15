@@ -1,4 +1,4 @@
-package tu.sofia.parallel.programming.project;
+package tu.sofia.parallel.programming.project.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,6 +16,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.IOUtils;
+
+import tu.sofia.parallel.programming.project.multiplicator.MatrixMultiplicator;
 
 @WebServlet("/matrix-multiply")
 public class MatrixMultiplyServlet extends HttpServlet {
@@ -91,15 +93,15 @@ public class MatrixMultiplyServlet extends HttpServlet {
 			final int colsN = cols.length;
 			int[][] matrix = new int[rowsN][colsN];
 
-			for (int r = 0; r < rows.length; r++) {
-				String[] colsPerRow = rows[r].split(" ");
+			for (int row = 0; row < rows.length; row++) {
+				String[] colsPerRow = rows[row].split(" ");
 				// matrix is not consistent
 				if (colsPerRow.length != colsN) {
 					throw new NumberFormatException();
 				}
 
-				for (int c = 0; c < colsPerRow.length; c++) {
-					matrix[r][c] = Integer.parseInt(colsPerRow[c].trim());
+				for (int col = 0; col < colsPerRow.length; col++) {
+					matrix[row][col] = Integer.parseInt(colsPerRow[col].trim());
 				}
 			}
 			addInMatricesArray(matrix);
