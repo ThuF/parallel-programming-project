@@ -69,12 +69,12 @@ public class MatrixFileGeneratorServlet extends HttpServlet {
 		response.setHeader("Content-Disposition", "attachment;filename=generated-matrix.txt");
 		PrintWriter out = response.getWriter();
 
-		for (int i = 0; i < matrix.length; i++) {
-			for (int j = 0; j < matrix[0].length; j++) {
-				if (j == matrix[0].length - 1) {
-					out.print(matrix[i][j]);
+		for (int row = 0; row < matrix.length; row++) {
+			for (int col = 0; col < matrix[0].length; col++) {
+				if (col == matrix[0].length - 1) {
+					out.print(matrix[row][col]);
 				} else {
-					out.print(matrix[i][j] + " ");
+					out.print(matrix[row][col] + " ");
 				}
 			}
 			out.println();

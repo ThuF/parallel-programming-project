@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 public class MatrixMultiplicator {
 
+	private static final Logger logger = Logger.getLogger(MatrixMultiplicator.class.getName());
+
 	public static int[][] multiplyInParallel(int[][] matrixA, int[][] matrixB)
 			throws IllegalArgumentException {
 		int columnsInA = matrixA[0].length;
@@ -62,7 +64,7 @@ public class MatrixMultiplicator {
 			try {
 				worker.join();
 			} catch (InterruptedException ex) {
-				Logger.getLogger(MatrixMultiplicator.class.getName()).log(Level.SEVERE, null, ex);
+				logger.log(Level.SEVERE, null, ex);
 			}
 		}
 		return matrixProduct;
