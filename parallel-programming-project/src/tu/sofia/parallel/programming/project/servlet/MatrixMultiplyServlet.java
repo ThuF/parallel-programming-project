@@ -40,11 +40,10 @@ public class MatrixMultiplyServlet extends HttpServlet {
 		response.setStatus(200);
 		try {
 			writeResult(out);
-
 			resetMatricesArray();
 			matrices[1] = result;
-		} catch (IllegalArgumentException iae) {
-			out.print(iae.getMessage());
+		} catch (IllegalArgumentException e) {
+			out.print(e.getMessage());
 		}
 		out.flush();
 	}
@@ -86,17 +85,15 @@ public class MatrixMultiplyServlet extends HttpServlet {
 	}
 
 	private void parseAndSaveMatrix(List<String> filesAsStrings) throws NumberFormatException {
-		for (int m = 0; m < filesAsStrings.size(); m++) {
-			String[] rows = filesAsStrings.get(m).split("\n");
+		for (int file = 0; file < filesAsStrings.size(); file++) {
+			String[] rows = filesAsStrings.get(file).split("\n");
 			String[] cols = rows[0].split(" ");
-			final int rowsN = rows.length;
-			final int colsN = cols.length;
-			int[][] matrix = new int[rowsN][colsN];
+			int[][] matrix = new int[rows.length][cols.length];
 
 			for (int row = 0; row < rows.length; row++) {
 				String[] colsPerRow = rows[row].split(" ");
 				// matrix is not consistent
-				if (colsPerRow.length != colsN) {
+				if (colsPerRow.length != cols.length) {
 					throw new NumberFormatException();
 				}
 
